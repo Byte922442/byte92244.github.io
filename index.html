@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Заявка на модерацию | Discord Webhook</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #1a1e2c 0%, #0f121c 100%);
+            font-family: 'Segoe UI', 'Inter', 'Poppins', system-ui, -apple-system, 'Roboto', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Контейнер с эффектом стекла */
+        .glass-card {
+            background: rgba(30, 34, 48, 0.75);
+            backdrop-filter: blur(16px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            max-width: 720px;
+            width: 100%;
+            padding: 2rem 2rem 2.5rem;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 550px) {
+            .glass-card {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Заголовок */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .badge {
+            background: #5865f2;
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: white;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 10px rgba(88, 101, 242, 0.3);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, #b9c3ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .sub {
+            color: #a3adcf;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: inline-block;
+            padding-top: 0.5rem;
+        }
+
+        /* Форма */
+        .form-group {
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #eef2ff;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        label i {
+            color: #5865f2;
+            font-style: normal;
+            font-weight: 700;
+        }
+
+        input, textarea, select {
+            background: #1e2436;
+            border: 1.5px solid #2c3147;
+            border-radius: 1rem;
+            padding: 0.85rem 1.2rem;
+            font-size: 1rem;
+            color: #f0f3ff;
+            font-family: inherit;
+            transition: all 0.2s;
+            outline: none;
+            resize: vertical;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #5865f2;
+            box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.3);
+            background: #23293f;
+        }
+
+        textarea {
+            min-height: 90px;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a3adcf' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+            background-repeat: no-repeat;
+            background-position: right 1.2rem center;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            background: #1e2436;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1rem;
+            border: 1.5px solid #2c3147;
+        }
+
+        .radio-group label {
+            margin-bottom: 0;
+            font-weight: 500;
+            gap: 0.4rem;
+            cursor: pointer;
+        }
+
+        input[type="radio"] {
+            accent-color: #5865f2;
+            width: auto;
+            margin-right: 0.3rem;
+            transform: scale(1.05);
+        }
+
+        /* Кнопка */
+        button {
+            background: linear-gradient(95deg, #5865f2, #4752c4);
+            border: none;
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            border-radius: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.6rem;
+            box-shadow: 0 8px 18px rgba(88, 101, 242, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(95deg, #6c78f2, #5865f2);
+            box-shadow: 0 12px 22px rgba(88, 101, 242, 0.4);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        /* Уведомления */
+        .toast-msg {
+            visibility: hidden;
+            min-width: 240px;
+            background-color: #1e2436e6;
+            backdrop-filter: blur(12px);
+            color: #fff;
+            text-align: center;
+            border-radius: 60px;
+            padding: 12px 24px;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            font-weight: 500;
+            z-index: 1000;
+            border-left: 4px solid #5865f2;
+            box-shadow: 0 12px 20px rgba(0,0,0,0.3);
+            transition: visibility 0.2s, opacity 0.2s;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .toast-msg.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .toast-msg.error {
+            border-left-color: #ed4245;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #2c3147, transparent);
+            margin: 1rem 0 1.5rem;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #5d6b91;
+            margin-top: 1.8rem;
+        }
+
+        .required-star {
+            color: #ed4245;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="glass-card">
+    <div class="header">
+        <div class="badge">✨ Discord Moderation</div>
+        <h1>Заявка на модерацию</h1>
+        <div class="sub">Стань частью команды &nbsp;•&nbsp; Заполни анкету</div>
+    </div>
+
+    <form id="modForm">
+        <!-- 1. Ваш ник -->
+        <div class="form-group">
+            <label><i>📛</i> 1. Ваш ник <span class="required-star">*</span></label>
+            <input type="text" id="nickname" name="nickname" placeholder="Введите ваш Discord / игровой ник" required>
+        </div>
+
+        <!-- 2. Почему хотите встать на должность -->
+        <div class="form-group">
+            <label><i>💭</i> 2. Почему вы хотите встать на эту должность? <span class="required-star">*</span></label>
+            <textarea id="reason" name="reason" placeholder="Опишите вашу мотивацию, видение работы и почему именно вы..." required></textarea>
+        </div>
+
+        <!-- 3. Опыт -->
+        <div class="form-group">
+            <label><i>📜</i> 3. Был ли у вас опыт? <span class="required-star">*</span></label>
+            <textarea id="experience" name="experience" placeholder="Если был опыт модерации/администрирования — расскажите. Если нет, так и напишите 'Опыта нет, но готов учиться'" required></textarea>
+        </div>
+
+        <!-- 4. Возраст -->
+        <div class="form-group">
+            <label><i>🎂</i> 4. Ваш возраст <span class="required-star">*</span></label>
+            <input type="number" id="age" name="age" placeholder="например: 19" min="13" max="100" required>
+        </div>
+
+        <!-- 5. Готовность к обзвону (радио) -->
+        <div class="form-group">
+            <label><i>📞</i> 5. Готовы ли вы пройти обзвон? <span class="required-star">*</span></label>
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="callReady" value="Да, полностью готов" required> ✅ Да, готов
+                </label>
+                <label>
+                    <input type="radio" name="callReady" value="Нет, не готов"> ❌ Нет, не готов
+                </label>
+                <label>
+                    <input type="radio" name="callReady" value="Возможно, обсуждаемо"> 🤔 Возможно
+                </label>
+            </div>
+        </div>
+
+        <!-- 6. Когда сможете пройти обзвон -->
+        <div class="form-group">
+            <label><i>⏰</i> 6. Когда сможете пройти обзвон? <span class="required-star">*</span></label>
+            <input type="text" id="callTime" name="callTime" placeholder="например: 25-26 мая после 18:00 МСК / в любое время" required>
+        </div>
+
+        <!-- дополнительная информация (необязательно) -->
+        <div class="form-group">
+            <label><i>💬</i> Доп. контакт (опционально)</label>
+            <input type="text" id="contact" name="contact" placeholder="Telegram / Discord (если не совпадает с ником)">
+        </div>
+
+        <hr>
+
+        <button type="submit" id="submitBtn">
+            ✨ Отправить заявку в Discord
+        </button>
+    </form>
+    <footer>
+        Данные отправляются напрямую в защищённый канал модерации.
+    </footer>
+</div>
+
+<div id="toastMsg" class="toast-msg">✅ Заявка отправлена!</div>
+
+<script>
+    (function() {
+        // ВЕБХУК URL (из ссылки пользователя)
+        const WEBHOOK_URL = "https://discord.com/api/webhooks/1500027809047908392/Fz8EMr7v8F-JrRVOPQNPnHOq_ZUeb9-VIsX5d6MV_u9IH2v3dYRmER80yft93LqEdqfW";
+        
+        // DOM элементы
+        const form = document.getElementById('modForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const toast = document.getElementById('toastMsg');
+        
+        // Поля
+        const nicknameInput = document.getElementById('nickname');
+        const reasonInput = document.getElementById('reason');
+        const experienceInput = document.getElementById('experience');
+        const ageInput = document.getElementById('age');
+        const callTimeInput = document.getElementById('callTime');
+        const contactInput = document.getElementById('contact');
+        
+        // Показать уведомление
+        function showNotification(message, isError = false) {
+            toast.textContent = message;
+            if (isError) {
+                toast.classList.add('error');
+            } else {
+                toast.classList.remove('error');
+            }
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3800);
+        }
+        
+        // Валидация на клиенте
+        function validateForm() {
+            const nickname = nicknameInput.value.trim();
+            if (nickname === "") {
+                showNotification("❌ Введите ваш ник!", true);
+                nicknameInput.focus();
+                return false;
+            }
+            if (nickname.length < 2) {
+                showNotification("❌ Ник слишком короткий", true);
+                return false;
+            }
+            
+            const reason = reasonInput.value.trim();
+            if (reason === "") {
+                showNotification("❌ Расскажите, почему хотите стать модератором", true);
+                reasonInput.focus();
+                return false;
+            }
+            if (reason.length < 10) {
+                showNotification("❌ Пожалуйста, опишите мотивацию подробнее (минимум 10 символов)", true);
+                return false;
+            }
+            
+            const experience = experienceInput.value.trim();
+            if (experience === "") {
+                showNotification("❌ Укажите информацию об опыте (можно написать 'нет опыта')", true);
+                experienceInput.focus();
+                return false;
+            }
+            
+            const ageRaw = ageInput.value.trim();
+            if (ageRaw === "") {
+                showNotification("❌ Укажите ваш возраст", true);
+                ageInput.focus();
+                return false;
+            }
+            const ageNum = parseInt(ageRaw, 10);
+            if (isNaN(ageNum) || ageNum < 13 || ageNum > 100) {
+                showNotification("❌ Введите корректный возраст (от 13 до 100)", true);
+                ageInput.focus();
+                return false;
+            }
+            
+            // radio готовность к обзвону
+            const callReadyRadios = document.querySelectorAll('input[name="callReady"]');
+            let callReadySelected = false;
+            let callReadyValue = "";
+            for (let radio of callReadyRadios) {
+                if (radio.checked) {
+                    callReadySelected = true;
+                    callReadyValue = radio.value;
+                    break;
+                }
+            }
+            if (!callReadySelected) {
+                showNotification("❌ Выберите готовность к обзвону", true);
+                return false;
+            }
+            
+            const callTime = callTimeInput.value.trim();
+            if (callTime === "") {
+                showNotification("❌ Укажите, когда сможете пройти обзвон", true);
+                callTimeInput.focus();
+                return false;
+            }
+            
+            return {
+                nickname,
+                reason,
+                experience,
+                age: ageNum,
+                callReady: callReadyValue,
+                callTime,
+                contact: contactInput.value.trim() || "Не указан"
+            };
+        }
+        
+        // Функция отправки в Discord Webhook (embed + простой текст, чтобы было красиво)
+        async function sendToDiscord(formData) {
+            // Создаём красивое embed-сообщение для модерации
+            const embed = {
+                title: "📋 Новая заявка на модерацию",
+                color: 0x5865F2,  // цвет Discord Blurple
+                timestamp: new Date().toISOString(),
+                footer: {
+                    text: "Discord Moderation System • Заявка",
+                    icon_url: "https://cdn.discordapp.com/emojis/891472270519590952.png"
+                },
+                fields: [
+                    {
+                        name: "👤 1. Никнейм",
+                        value: `\`${escapeMarkdown(formData.nickname)}\``,
+                        inline: false
+                    },
+                    {
+                        name: "💡 2. Почему хочет встать на должность",
+                        value: truncateText(escapeMarkdown(formData.reason), 950),
+                        inline: false
+                    },
+                    {
+                        name: "📜 3. Опыт модерации",
+                        value: truncateText(escapeMarkdown(formData.experience), 950),
+                        inline: false
+                    },
+                    {
+                        name: "🎂 4. Возраст",
+                        value: `${formData.age} лет`,
+                        inline: true
+                    },
+                    {
+                        name: "📞 5. Готов к обзвону?",
+                        value: formData.callReady,
+                        inline: true
+                    },
+                    {
+                        name: "⏰ 6. Когда сможет пройти обзвон",
+                        value: escapeMarkdown(formData.callTime),
+                        inline: false
+                    },
+                    {
+                        name: "📬 Доп. контакт",
+                        value: escapeMarkdown(formData.contact) === "" ? "Не указан" : escapeMarkdown(formData.contact),
+                        inline: false
+                    }
+                ],
+                thumbnail: {
+                    url: "https://cdn-icons-png.flaticon.com/512/5968/5968705.png"
+                }
+            };
+            
+            // Добавим префикс с аватаркой вебхука (опционально)
+            const payload = {
+                username: "Модерация Заявки",
+                avatar_url: "https://cdn.discordapp.com/attachments/922540726945316864/1084322121565933629/discord-mod.png", // нейтральная иконка
+                embeds: [embed]
+            };
+            
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    return { success: true };
+                } else {
+                    let errorText = "";
+                    try {
+                        const errorJson = await response.json();
+                        errorText = JSON.stringify(errorJson);
+                    } catch(e) {
+                        errorText = await response.text();
+                    }
+                    console.error("Discord webhook error:", response.status, errorText);
+                    return { success: false, error: `Ошибка ${response.status}: ${errorText.substring(0, 100)}` };
+                }
+            } catch (networkError) {
+                console.error("Сетевая ошибка:", networkError);
+                return { success: false, error: "Ошибка сети. Проверьте соединение." };
+            }
+        }
+        
+        // вспомогательные функции для экранирования Markdown Discord (чтобы не ломалось)
+        function escapeMarkdown(text) {
+            if (!text) return "";
+            return text.replace(/([`*_~|\\])/g, '\\$1')
+                       .replace(/@(everyone|here)/gi, '@\u200b$1');
+        }
+        
+        function truncateText(text, maxLength) {
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength - 3) + "...";
+        }
+        
+        // Блокировка кнопки на время отправки
+        function setLoadingState(loading) {
+            if (loading) {
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = "0.7";
+                submitBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="spinner"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0 0 20"/></svg> Отправка...`;
+                // добавляем простую анимацию спиннера через css
+                const svgSpinner = submitBtn.querySelector('svg');
+                if (svgSpinner) {
+                    svgSpinner.style.animation = "spin 1s linear infinite";
+                }
+                if (!document.querySelector('#spinStyle')) {
+                    const style = document.createElement('style');
+                    style.id = 'spinStyle';
+                    style.textContent = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
+                    document.head.appendChild(style);
+                }
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = "1";
+                submitBtn.innerHTML = `✨ Отправить заявку в Discord`;
+            }
+        }
+        
+        // Основной обработчик отправки
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            const validated = validateForm();
+            if (!validated) return; // показ ошибки уже внутри validateForm
+            
+            setLoadingState(true);
+            
+            // Подготовка данных для отправки
+            const dataForHook = {
+                nickname: validated.nickname,
+                reason: validated.reason,
+                experience: validated.experience,
+                age: validated.age,
+                callReady: validated.callReady,
+                callTime: validated.callTime,
+                contact: validated.contact,
+            };
+            
+            const result = await sendToDiscord(dataForHook);
+            
+            if (result.success) {
+                // Успех — очищаем форму и показываем поздравление
+                showNotification("✅ Заявка успешно отправлена! Модерация рассмотрит её.");
+                form.reset();
+                // Также сбросим радио кнопки вручную (reset формы отрабатывает, но браузер сбрасывает радио)
+                // Однако reset не всегда хорошо дружит с радиогруппой, сделаем дополнительно:
+                const radioButtons = document.querySelectorAll('input[name="callReady"]');
+                radioButtons.forEach(radio => radio.checked = false);
+                // Доп. сбросим поля стиля (необязательно)
+                nicknameInput.value = '';
+                reasonInput.value = '';
+                experienceInput.value = '';
+                ageInput.value = '';
+                callTimeInput.value = '';
+                contactInput.value = '';
+            } else {
+                let errorMsg = result.error || "Неизвестная ошибка вебхука Discord";
+                showNotification(`❌ Ошибка отправки: ${errorMsg.substring(0, 120)}`, true);
+            }
+            
+            setLoadingState(false);
+        });
+        
+        // Добавляем интерактив — отключаем стандартный сабмит при повторном нажатии энтер
+        // проверка дополнительно
+        const allInputs = document.querySelectorAll('input, textarea');
+        allInputs.forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !(e.target.tagName === 'TEXTAREA')) {
+                    e.preventDefault();
+                    if (e.target.closest('form')) {
+                        // имитируем клик по кнопке, но лучше не сабмитить случайно при заполнении
+                        // но ничего страшного, просто можно отправить, если форма валидна
+                        // однако для удобства: enter на никнейме запускает отправку? пользователь может хотеть.
+                        // сделаем, чтобы enter на любом поле кроме textarea отправлял, только если нажата клавиша без модификаторов.
+                        // Но чтобы не раздражать, оставляем классическое поведение - пусть отправляет.
+                        // Но у нас уже есть сабмит на форме, в любом случае отработает.
+                    }
+                }
+            });
+        });
+        
+        // Стилизация для спиннера: если вдруг не динамически, добавим
+        if (!document.querySelector('#dynamicSpinnerStyle')) {
+            const ss = document.createElement('style');
+            ss.id = 'dynamicSpinnerStyle';
+            ss.textContent = `.spinner { animation: spin 1s linear infinite; transform-origin: center; }`;
+            document.head.appendChild(ss);
+        }
+        
+        // Микрофикс: если у чистой формы reset не снимает disabled у radio (можно просто ничего)
+        console.log("Форма заявки готова. Вебхук интегрирован.");
+    })();
+</script>
+</body>
+</html>
