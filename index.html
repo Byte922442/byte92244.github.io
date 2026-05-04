@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Заявка на модерацию | Discord Webhook</title>
+    <title>Заявка на модерацию | Центр экрана</title>
     <style>
         * {
             margin: 0;
@@ -13,24 +13,25 @@
 
         body {
             background: linear-gradient(145deg, #1a1e2c 0%, #0f121c 100%);
-            font-family: 'Segoe UI', 'Inter', 'Poppins', system-ui, -apple-system, 'Roboto', sans-serif;
+            font-family: 'Segoe UI', 'Inter', system-ui, 'Roboto', sans-serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 2rem 1.5rem;
+            padding: 2rem;
         }
 
-        /* Контейнер с эффектом стекла */
+        /* Карточка по центру */
         .glass-card {
-            background: rgba(30, 34, 48, 0.75);
+            background: rgba(30, 34, 48, 0.85);
             backdrop-filter: blur(16px);
             border-radius: 2rem;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(88, 101, 242, 0.2);
             max-width: 720px;
             width: 100%;
             padding: 2rem 2rem 2.5rem;
             transition: all 0.3s ease;
+            margin: auto;
         }
 
         @media (max-width: 550px) {
@@ -46,38 +47,70 @@
         }
 
         .badge {
-            background: #5865f2;
+            background: linear-gradient(135deg, #5865f2, #4752c4);
             display: inline-block;
-            padding: 0.3rem 1rem;
+            padding: 0.3rem 1.2rem;
             border-radius: 60px;
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
             letter-spacing: 0.5px;
             color: white;
             text-transform: uppercase;
             margin-bottom: 1rem;
-            box-shadow: 0 4px 10px rgba(88, 101, 242, 0.3);
+            box-shadow: 0 4px 12px rgba(88, 101, 242, 0.4);
         }
 
         h1 {
             font-size: 2rem;
-            font-weight: 700;
+            font-weight: 800;
             background: linear-gradient(135deg, #ffffff, #b9c3ff);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
         }
 
-        .sub {
-            color: #a3adcf;
-            font-size: 0.9rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            display: inline-block;
-            padding-top: 0.5rem;
+        /* Блок с авто-пингом */
+        .auto-ping-info {
+            background: linear-gradient(135deg, #1e2440, #151a30);
+            border: 1px solid #5865f2;
+            border-radius: 1rem;
+            padding: 0.9rem 1.2rem;
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
         }
 
-        /* Форма */
+        .ping-icon {
+            font-size: 1.8rem;
+        }
+
+        .ping-text {
+            flex: 1;
+        }
+
+        .ping-text strong {
+            color: #5865f2;
+        }
+
+        .ping-roles-list {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-top: 0.3rem;
+        }
+
+        .role-tag {
+            background: #2c2a55;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #b9c3ff;
+        }
+
         .form-group {
             margin-bottom: 1.5rem;
             display: flex;
@@ -89,15 +122,11 @@
             margin-bottom: 0.5rem;
             color: #eef2ff;
             font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
-        label i {
-            color: #5865f2;
-            font-style: normal;
-            font-weight: 700;
+        .required-star {
+            color: #ed4245;
+            margin-left: 0.2rem;
         }
 
         input, textarea, select {
@@ -155,7 +184,6 @@
             transform: scale(1.05);
         }
 
-        /* Кнопка */
         button {
             background: linear-gradient(95deg, #5865f2, #4752c4);
             border: none;
@@ -167,28 +195,27 @@
             border-radius: 1.5rem;
             cursor: pointer;
             transition: all 0.2s;
-            margin-top: 1rem;
+            margin-top: 0.5rem;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 0.6rem;
-            box-shadow: 0 8px 18px rgba(88, 101, 242, 0.2);
+            box-shadow: 0 8px 18px rgba(88, 101, 242, 0.3);
         }
 
         button:hover {
             transform: translateY(-2px);
             background: linear-gradient(95deg, #6c78f2, #5865f2);
-            box-shadow: 0 12px 22px rgba(88, 101, 242, 0.4);
+            box-shadow: 0 12px 22px rgba(88, 101, 242, 0.5);
         }
 
         button:active {
             transform: translateY(1px);
         }
 
-        /* Уведомления */
         .toast-msg {
             visibility: hidden;
-            min-width: 240px;
+            min-width: 260px;
             background-color: #1e2436e6;
             backdrop-filter: blur(12px);
             color: #fff;
@@ -202,7 +229,7 @@
             font-size: 0.9rem;
             font-weight: 500;
             z-index: 1000;
-            border-left: 4px solid #5865f2;
+            border-left: 4px solid #23a55a;
             box-shadow: 0 12px 20px rgba(0,0,0,0.3);
             transition: visibility 0.2s, opacity 0.2s;
             opacity: 0;
@@ -223,59 +250,62 @@
             border: none;
             height: 1px;
             background: linear-gradient(to right, transparent, #2c3147, transparent);
-            margin: 1rem 0 1.5rem;
+            margin: 0.5rem 0 1.2rem;
         }
 
-        footer {
-            text-align: center;
-            font-size: 0.7rem;
-            color: #5d6b91;
-            margin-top: 1.8rem;
-        }
-
-        .required-star {
-            color: #ed4245;
-            font-size: 0.9rem;
-        }
+        /* Убрали footer с текстом */
     </style>
 </head>
 <body>
 
 <div class="glass-card">
     <div class="header">
-        <div class="badge">✨ Discord Moderation</div>
+        <div class="badge">✨ Модерация Discord</div>
         <h1>Заявка на модерацию</h1>
-        <div class="sub">Стань частью команды &nbsp;•&nbsp; Заполни анкету</div>
+    </div>
+
+    <!-- Блок с авто-пингом -->
+    <div class="auto-ping-info">
+        <div class="ping-icon">🔔</div>
+        <div class="ping-text">
+            <strong>Автоматическое уведомление</strong><br>
+            При отправке заявки <strong>всегда будут отмечены</strong> следующие роли:
+            <div class="ping-roles-list">
+                <span class="role-tag">🟢 JuniperBot</span>
+                <span class="role-tag">🔴 СОЗДАТЕЛЬ</span>
+                <span class="role-tag">🟡 ЗАМ</span>
+            </div>
+        </div>
     </div>
 
     <form id="modForm">
         <!-- 1. Ваш ник -->
         <div class="form-group">
-            <label><i>📛</i> 1. Ваш ник <span class="required-star">*</span></label>
-            <input type="text" id="nickname" name="nickname" placeholder="Введите ваш Discord / игровой ник" required>
+            <label>1. Ваш ник <span class="required-star">*</span></label>
+            <input type="text" id="nickname" placeholder="Введите ваш Discord / игровой ник" required>
         </div>
 
         <!-- 2. Почему хотите встать на должность -->
         <div class="form-group">
-            <label><i>💭</i> 2. Почему вы хотите встать на эту должность? <span class="required-star">*</span></label>
-            <textarea id="reason" name="reason" placeholder="Опишите вашу мотивацию, видение работы и почему именно вы..." required></textarea>
+            <label>2. Почему вы хотите встать на эту должность? <span class="required-star">*</span></label>
+            <textarea id="reason" placeholder="Опишите вашу мотивацию, видение работы и почему именно вы..." required></textarea>
         </div>
 
         <!-- 3. Опыт -->
         <div class="form-group">
-            <label><i>📜</i> 3. Был ли у вас опыт? <span class="required-star">*</span></label>
-            <textarea id="experience" name="experience" placeholder="Если был опыт модерации/администрирования — расскажите. Если нет, так и напишите 'Опыта нет, но готов учиться'" required></textarea>
+            <label>3. Был ли у вас опыт? <span class="required-star">*</span></label>
+            <textarea id="experience" placeholder="Если был опыт модерации/администрирования — расскажите. Если нет, так и напишите 'Опыта нет, но готов учиться'" required></textarea>
         </div>
 
         <!-- 4. Возраст -->
         <div class="form-group">
-            <label><i>🎂</i> 4. Ваш возраст <span class="required-star">*</span></label>
-            <input type="number" id="age" name="age" placeholder="например: 19" min="13" max="100" required>
+            <label>4. Ваш возраст <span class="required-star">*</span></label>
+            <input type="number" id="age" placeholder="например: 19" min="13" max="100" required>
         </div>
 
-        <!-- 5. Готовность к обзвону (радио) -->
+        <!-- 5. Готовность к обзвону -->
         <div class="form-group">
-            <label><i>📞</i> 5. Готовы ли вы пройти обзвон? <span class="required-star">*</span></label>
+            <label>5. Готовы ли вы пройти обзвон? <span class="required-star">*</span></label>
             <div class="radio-group">
                 <label>
                     <input type="radio" name="callReady" value="Да, полностью готов" required> ✅ Да, готов
@@ -291,40 +321,40 @@
 
         <!-- 6. Когда сможете пройти обзвон -->
         <div class="form-group">
-            <label><i>⏰</i> 6. Когда сможете пройти обзвон? <span class="required-star">*</span></label>
-            <input type="text" id="callTime" name="callTime" placeholder="например: 25-26 мая после 18:00 МСК / в любое время" required>
+            <label>6. Когда сможете пройти обзвон? <span class="required-star">*</span></label>
+            <input type="text" id="callTime" placeholder="например: 25-26 мая после 18:00 МСК / в любое время" required>
         </div>
 
-        <!-- дополнительная информация (необязательно) -->
+        <!-- Доп. контакт -->
         <div class="form-group">
-            <label><i>💬</i> Доп. контакт (опционально)</label>
-            <input type="text" id="contact" name="contact" placeholder="Telegram / Discord (если не совпадает с ником)">
+            <label>Доп. контакт (опционально)</label>
+            <input type="text" id="contact" placeholder="Telegram / Discord (если не совпадает с ником)">
         </div>
 
         <hr>
-
         <button type="submit" id="submitBtn">
-            ✨ Отправить заявку в Discord
+            ✨ Отправить заявку (с пингом всех ролей)
         </button>
     </form>
-    <footer>
-        Данные отправляются напрямую в защищённый канал модерации.
-    </footer>
 </div>
 
 <div id="toastMsg" class="toast-msg">✅ Заявка отправлена!</div>
 
 <script>
     (function() {
-        // ВЕБХУК URL (из ссылки пользователя)
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1500027809047908392/Fz8EMr7v8F-JrRVOPQNPnHOq_ZUeb9-VIsX5d6MV_u9IH2v3dYRmER80yft93LqEdqfW";
         
-        // DOM элементы
+        // ⚠️ ЗАМЕНИТЕ НА РЕАЛЬНЫЕ ID РОЛЕЙ
+        const ROLE_IDS = {
+            "🟢 JuniperBot": "1500024123957710848",
+            "🔴 СОЗДАТЕЛЬ": "1500019319227158699",
+            "🟡 ЗАМ": "1500019872766365827"
+        };
+        
         const form = document.getElementById('modForm');
         const submitBtn = document.getElementById('submitBtn');
         const toast = document.getElementById('toastMsg');
         
-        // Поля
         const nicknameInput = document.getElementById('nickname');
         const reasonInput = document.getElementById('reason');
         const experienceInput = document.getElementById('experience');
@@ -332,7 +362,6 @@
         const callTimeInput = document.getElementById('callTime');
         const contactInput = document.getElementById('contact');
         
-        // Показать уведомление
         function showNotification(message, isError = false) {
             toast.textContent = message;
             if (isError) {
@@ -346,7 +375,33 @@
             }, 3800);
         }
         
-        // Валидация на клиенте
+        function escapeMarkdown(text) {
+            if (!text) return "";
+            return text.replace(/([`*_~|\\])/g, '\\$1')
+                       .replace(/@(everyone|here)/gi, '@\u200b$1');
+        }
+        
+        function truncateText(text, maxLength) {
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength - 3) + "...";
+        }
+        
+        function getAllRolesMention() {
+            const roleMentions = [];
+            const roleNames = ["🟢 JuniperBot", "🔴 СОЗДАТЕЛЬ", "🟡 ЗАМ"];
+            
+            for (const roleName of roleNames) {
+                const roleId = ROLE_IDS[roleName];
+                if (roleId && !roleId.includes("ID_РОЛИ") && /^\d+$/.test(roleId)) {
+                    roleMentions.push(`<@&${roleId}>`);
+                } else {
+                    roleMentions.push(`**${roleName}**`);
+                }
+            }
+            
+            return `🔔 **НОВАЯ ЗАЯВКА НА МОДЕРАЦИЮ**\nУведомление для модерации: ${roleMentions.join(" ")}`;
+        }
+        
         function validateForm() {
             const nickname = nicknameInput.value.trim();
             if (nickname === "") {
@@ -366,13 +421,13 @@
                 return false;
             }
             if (reason.length < 10) {
-                showNotification("❌ Пожалуйста, опишите мотивацию подробнее (минимум 10 символов)", true);
+                showNotification("❌ Опишите мотивацию подробнее (минимум 10 символов)", true);
                 return false;
             }
             
             const experience = experienceInput.value.trim();
             if (experience === "") {
-                showNotification("❌ Укажите информацию об опыте (можно написать 'нет опыта')", true);
+                showNotification("❌ Укажите информацию об опыте", true);
                 experienceInput.focus();
                 return false;
             }
@@ -390,7 +445,6 @@
                 return false;
             }
             
-            // radio готовность к обзвону
             const callReadyRadios = document.querySelectorAll('input[name="callReady"]');
             let callReadySelected = false;
             let callReadyValue = "";
@@ -414,214 +468,95 @@
             }
             
             return {
-                nickname,
-                reason,
-                experience,
+                nickname: escapeMarkdown(nickname),
+                reason: escapeMarkdown(reason),
+                experience: escapeMarkdown(experience),
                 age: ageNum,
                 callReady: callReadyValue,
-                callTime,
-                contact: contactInput.value.trim() || "Не указан"
+                callTime: escapeMarkdown(callTime),
+                contact: escapeMarkdown(contactInput.value.trim()) || "Не указан"
             };
         }
         
-        // Функция отправки в Discord Webhook (embed + простой текст, чтобы было красиво)
         async function sendToDiscord(formData) {
-            // Создаём красивое embed-сообщение для модерации
+            const mentionContent = getAllRolesMention();
+            
             const embed = {
-                title: "📋 Новая заявка на модерацию",
-                color: 0x5865F2,  // цвет Discord Blurple
+                title: "📋 НОВАЯ ЗАЯВКА НА МОДЕРАЦИЮ",
+                color: 0x5865F2,
                 timestamp: new Date().toISOString(),
                 footer: {
-                    text: "Discord Moderation System • Заявка",
+                    text: "Автоматический пинг ролей",
                     icon_url: "https://cdn.discordapp.com/emojis/891472270519590952.png"
                 },
                 fields: [
-                    {
-                        name: "👤 1. Никнейм",
-                        value: `\`${escapeMarkdown(formData.nickname)}\``,
-                        inline: false
-                    },
-                    {
-                        name: "💡 2. Почему хочет встать на должность",
-                        value: truncateText(escapeMarkdown(formData.reason), 950),
-                        inline: false
-                    },
-                    {
-                        name: "📜 3. Опыт модерации",
-                        value: truncateText(escapeMarkdown(formData.experience), 950),
-                        inline: false
-                    },
-                    {
-                        name: "🎂 4. Возраст",
-                        value: `${formData.age} лет`,
-                        inline: true
-                    },
-                    {
-                        name: "📞 5. Готов к обзвону?",
-                        value: formData.callReady,
-                        inline: true
-                    },
-                    {
-                        name: "⏰ 6. Когда сможет пройти обзвон",
-                        value: escapeMarkdown(formData.callTime),
-                        inline: false
-                    },
-                    {
-                        name: "📬 Доп. контакт",
-                        value: escapeMarkdown(formData.contact) === "" ? "Не указан" : escapeMarkdown(formData.contact),
-                        inline: false
-                    }
+                    { name: "👤 Никнейм", value: formData.nickname, inline: false },
+                    { name: "💡 Почему хочет встать на должность", value: truncateText(formData.reason, 950), inline: false },
+                    { name: "📜 Опыт модерации", value: truncateText(formData.experience, 950), inline: false },
+                    { name: "🎂 Возраст", value: `${formData.age} лет`, inline: true },
+                    { name: "📞 Готов к обзвону?", value: formData.callReady, inline: true },
+                    { name: "⏰ Когда сможет пройти обзвон", value: formData.callTime, inline: false },
+                    { name: "📬 Доп. контакт", value: formData.contact, inline: false }
                 ],
-                thumbnail: {
-                    url: "https://cdn-icons-png.flaticon.com/512/5968/5968705.png"
-                }
+                thumbnail: { url: "https://cdn-icons-png.flaticon.com/512/5968/5968705.png" }
             };
             
-            // Добавим префикс с аватаркой вебхука (опционально)
             const payload = {
-                username: "Модерация Заявки",
-                avatar_url: "https://cdn.discordapp.com/attachments/922540726945316864/1084322121565933629/discord-mod.png", // нейтральная иконка
+                username: "📝 Заявки на модерацию",
+                avatar_url: "https://cdn.discordapp.com/attachments/922540726945316864/1084322121565933629/discord-mod.png",
+                content: mentionContent,
                 embeds: [embed]
             };
             
             try {
                 const response = await fetch(WEBHOOK_URL, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 });
                 
                 if (response.ok) {
                     return { success: true };
                 } else {
-                    let errorText = "";
-                    try {
-                        const errorJson = await response.json();
-                        errorText = JSON.stringify(errorJson);
-                    } catch(e) {
-                        errorText = await response.text();
-                    }
-                    console.error("Discord webhook error:", response.status, errorText);
-                    return { success: false, error: `Ошибка ${response.status}: ${errorText.substring(0, 100)}` };
+                    let errorText = await response.text();
+                    return { success: false, error: `Ошибка ${response.status}` };
                 }
             } catch (networkError) {
-                console.error("Сетевая ошибка:", networkError);
-                return { success: false, error: "Ошибка сети. Проверьте соединение." };
+                return { success: false, error: "Ошибка сети" };
             }
         }
         
-        // вспомогательные функции для экранирования Markdown Discord (чтобы не ломалось)
-        function escapeMarkdown(text) {
-            if (!text) return "";
-            return text.replace(/([`*_~|\\])/g, '\\$1')
-                       .replace(/@(everyone|here)/gi, '@\u200b$1');
-        }
-        
-        function truncateText(text, maxLength) {
-            if (text.length <= maxLength) return text;
-            return text.substring(0, maxLength - 3) + "...";
-        }
-        
-        // Блокировка кнопки на время отправки
         function setLoadingState(loading) {
             if (loading) {
                 submitBtn.disabled = true;
                 submitBtn.style.opacity = "0.7";
-                submitBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="spinner"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0 0 20"/></svg> Отправка...`;
-                // добавляем простую анимацию спиннера через css
-                const svgSpinner = submitBtn.querySelector('svg');
-                if (svgSpinner) {
-                    svgSpinner.style.animation = "spin 1s linear infinite";
-                }
-                if (!document.querySelector('#spinStyle')) {
-                    const style = document.createElement('style');
-                    style.id = 'spinStyle';
-                    style.textContent = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
-                    document.head.appendChild(style);
-                }
+                submitBtn.innerHTML = `<span>⏳ Отправка...</span>`;
             } else {
                 submitBtn.disabled = false;
                 submitBtn.style.opacity = "1";
-                submitBtn.innerHTML = `✨ Отправить заявку в Discord`;
+                submitBtn.innerHTML = `✨ Отправить заявку (с пингом всех ролей)`;
             }
         }
         
-        // Основной обработчик отправки
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
             
             const validated = validateForm();
-            if (!validated) return; // показ ошибки уже внутри validateForm
+            if (!validated) return;
             
             setLoadingState(true);
-            
-            // Подготовка данных для отправки
-            const dataForHook = {
-                nickname: validated.nickname,
-                reason: validated.reason,
-                experience: validated.experience,
-                age: validated.age,
-                callReady: validated.callReady,
-                callTime: validated.callTime,
-                contact: validated.contact,
-            };
-            
-            const result = await sendToDiscord(dataForHook);
+            const result = await sendToDiscord(validated);
             
             if (result.success) {
-                // Успех — очищаем форму и показываем поздравление
-                showNotification("✅ Заявка успешно отправлена! Модерация рассмотрит её.");
+                showNotification("✅ Заявка отправлена! Модераторы уведомлены.");
                 form.reset();
-                // Также сбросим радио кнопки вручную (reset формы отрабатывает, но браузер сбрасывает радио)
-                // Однако reset не всегда хорошо дружит с радиогруппой, сделаем дополнительно:
-                const radioButtons = document.querySelectorAll('input[name="callReady"]');
-                radioButtons.forEach(radio => radio.checked = false);
-                // Доп. сбросим поля стиля (необязательно)
-                nicknameInput.value = '';
-                reasonInput.value = '';
-                experienceInput.value = '';
-                ageInput.value = '';
-                callTimeInput.value = '';
-                contactInput.value = '';
+                document.querySelectorAll('input[name="callReady"]').forEach(radio => radio.checked = false);
             } else {
-                let errorMsg = result.error || "Неизвестная ошибка вебхука Discord";
-                showNotification(`❌ Ошибка отправки: ${errorMsg.substring(0, 120)}`, true);
+                showNotification(`❌ Ошибка: ${result.error}`, true);
             }
             
             setLoadingState(false);
         });
-        
-        // Добавляем интерактив — отключаем стандартный сабмит при повторном нажатии энтер
-        // проверка дополнительно
-        const allInputs = document.querySelectorAll('input, textarea');
-        allInputs.forEach(input => {
-            input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter' && !(e.target.tagName === 'TEXTAREA')) {
-                    e.preventDefault();
-                    if (e.target.closest('form')) {
-                        // имитируем клик по кнопке, но лучше не сабмитить случайно при заполнении
-                        // но ничего страшного, просто можно отправить, если форма валидна
-                        // однако для удобства: enter на никнейме запускает отправку? пользователь может хотеть.
-                        // сделаем, чтобы enter на любом поле кроме textarea отправлял, только если нажата клавиша без модификаторов.
-                        // Но чтобы не раздражать, оставляем классическое поведение - пусть отправляет.
-                        // Но у нас уже есть сабмит на форме, в любом случае отработает.
-                    }
-                }
-            });
-        });
-        
-        // Стилизация для спиннера: если вдруг не динамически, добавим
-        if (!document.querySelector('#dynamicSpinnerStyle')) {
-            const ss = document.createElement('style');
-            ss.id = 'dynamicSpinnerStyle';
-            ss.textContent = `.spinner { animation: spin 1s linear infinite; transform-origin: center; }`;
-            document.head.appendChild(ss);
-        }
-        
-        // Микрофикс: если у чистой формы reset не снимает disabled у radio (можно просто ничего)
-        console.log("Форма заявки готова. Вебхук интегрирован.");
     })();
 </script>
 </body>
